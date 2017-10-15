@@ -6,7 +6,7 @@ from define_parameters import paths
 import re
 import random
 from training import train_CNN
-#from testing import perform_testing
+from testing import test_CNN
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import logging
@@ -62,9 +62,12 @@ def train(X_train, y_train):
     process = train_CNN()
     process.main_train(X_train, y_train)
 
-#def test(X_test, y_test):
+def test(X_test, y_test):
     # Perform testing
-    #logger.info(" Starting testing...")
+    logger.info(" Starting testing...")
+    process2 = test_CNN()
+    performance = process2.main_train(X_test, y_test)
+    return performance
 
 def main():
     # Main calling all functions
@@ -74,8 +77,8 @@ def main():
 	X, y= shuffle_array(X, y)
 	X_train, X_test, y_train, y_test = TT_split(X,y)
 	train(X_train, y_train)
-	#performance = test(X_test, y_test)
-	#return performance
+	performance = test(X_test, y_test)
+	print("Metrics report on testing set: {}".format(performance))
 
 if __name__ == '__main__':
 	main()

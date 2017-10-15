@@ -10,3 +10,7 @@ class CNN_parameters:
     ACTIVATION = 'relu'
     OPTIMIZER = 'adam'
     NB_CLASS = 2
+
+class testing_options:
+	PLOT = True
+	CLASS_NAMES = ["Elo", "Tash"]
