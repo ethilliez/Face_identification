@@ -12,7 +12,18 @@ Algorithm performing face identification via supervised learning using a Convolu
 ## Status of development:
 For Keras implementation:
 - Code Skeletion created
+- Pre-processing implemented
+- Training implemented
+- Testing implemented
+- TESTING IN PROGRESS
 
 ## Requirements:
+The main librairies required are: `numpy`, `scipy`, `sklearn`, `keras` and `itertools`. They can be installed using `pip install` or `conda install`.
 
 ## Execution:
+1. Firsly, in `define_parameters.py`:
+- update the path to the folder containing the images and future model: `DATA_PATH` and `MODEL_PATH`
+- enter the CNN parameters in `CNN_parameters`
+- select if plotting confusion matrix in `testing_options`
+
+2. Executing the main script: `python3 main.py` 
