@@ -10,6 +10,7 @@ from testing import test_CNN
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import logging
+import matplotlib.pyplot as plt
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,6 +21,14 @@ def read_data(imagelist):
     X_img = [misc.imread(file) for file in imagelist]
     X = np.array(X_img)
     return X
+
+def standardization_data(imagelist, method = 'over-image'):
+	# Standardization:  x - mean / std
+    logger.info(" Standardization of images...")
+    for x in imagelist:
+        for chan in range(0,len(x[0,0])):
+            x[:,:,chan] = x[:,:,chan]/255
+    return imagelist
 
 def label_encoding(imagelist):
     # Use Regular Expression to get the name of the Data folder
@@ -71,14 +80,15 @@ def test(X_test, y_test):
 
 def main():
     # Main calling all functions
-	imagelist = glob(paths.DATA_PATH+"*")
-	X = read_data(imagelist)
-	y = label_encoding(imagelist)
-	X, y= shuffle_array(X, y)
-	X_train, X_test, y_train, y_test = TT_split(X,y)
-	train(X_train, y_train)
-	performance = test(X_test, y_test)
-	print("Metrics report on testing set: {}".format(performance))
+    imagelist = glob(paths.DATA_PATH+"*")
+    X = read_data(imagelist)
+    y = label_encoding(imagelist)
+    X = standardization_data(X)
+    X, y = shuffle_array(X, y)
+    X_train, X_test, y_train, y_test = TT_split(X,y)
+    train(X_train, y_train)
+    performance = test(X_test, y_test)
+    print("Metrics report on testing set: {}".format(performance))
 
 if __name__ == '__main__':
 	main()
