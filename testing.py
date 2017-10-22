@@ -1,5 +1,6 @@
 from define_parameters import CNN_parameters, paths, testing_options
 from keras.models import load_model
+from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 import itertools
 import numpy as np
@@ -16,7 +17,7 @@ class test_CNN:
         self.plot = testing_options.PLOT
         self.class_names = testing_options.CLASS_NAMES
 
-    def plot_confusion_matrix(cm, classes,
+    def plot_confusion_matrix(self, cm, classes,
                           normalize=False,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
@@ -41,16 +42,16 @@ class test_CNN:
 
     def main_test(self, X_test, y_test):
         # Load CNN model
-        model.load_weights(self.model_output_path+self.model_name)
+        model = load_model(self.model_output_path+self.model_name)
         # Perform testing
         y_predict = model.predict(X_test, batch_size = self.nb_batch)
         # Compute metrics
-        metrics_report = metrics.classification_report(y_test, np.round(y_predict))
+        metrics_report = classification_report(y_test, np.round(y_predict))
         # Plot confusion matrix if required
         if(self.plot):
-            cnf_matrix = metrics.confusion_matrix(y_test, np.round(y_predict))
+            cnf_matrix = confusion_matrix(y_test, np.round(y_predict))
             fig = plt.figure()
-            plot_confusion_matrix(cnf_matrix, classes = self.class_names, normalize=True,
+            self.plot_confusion_matrix(cnf_matrix, classes = self.class_names, normalize=True,
                       title='Normalized confusion matrix')
             fig.savefig("Confusion_matrix.png",format='png', dpi=300)
             fig.clf()

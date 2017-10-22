@@ -75,7 +75,7 @@ def test(X_test, y_test):
     # Perform testing
     logger.info(" Starting testing...")
     process2 = test_CNN()
-    performance = process2.main_train(X_test, y_test)
+    performance = process2.main_test(X_test, y_test)
     return performance
 
 def main():

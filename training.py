@@ -3,8 +3,13 @@ from keras import optimizers
 from keras import backend
 from keras.models import Sequential
 from keras.layers import  Conv2D, MaxPooling2D, Dense, Dropout, Flatten
+import numpy as np
 from numpy.random import seed
 from tensorflow import set_random_seed
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class train_CNN:
     def __init__(self):
@@ -57,9 +62,10 @@ class train_CNN:
         	y_train = y_train[0:100]
 
         for i in range(self.epochs):
-            history = model.fit(X_train, y_train, batch_size = self.nb_batch, shuffle= 'batch', validation_split = 0.1)
+            history = model.fit(X_train, y_train, batch_size = self.nb_batch, shuffle= 'batch', epochs=1, validation_split = 0.1)
             if(history.history['val_loss'][0] <= min_loss and history.history['val_binary_accuracy'][0] >= 0.9*max_accu):
                 min_loss = history.history['val_loss'][0]
                 max_accu = history.history['val_binary_accuracy'][0]
+                logger.info((" New saved weights with loss: ", np.round(min_loss,2), "and accuracy: ", np.round(max_accu,2)))
                 model.save(self.model_output_path+self.model_name, overwrite = True)
 
