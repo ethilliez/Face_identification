@@ -15,7 +15,7 @@ For Keras implementation:
 - Pre-processing implemented
 - Training implemented
 - Testing implemented
-- TESTING IN PROGRESS
+- Raw performance estimated (no fine-tuning)
 
 ## Requirements:
 The main librairies required are: `numpy`, `scipy`, `sklearn`, `keras` and `itertools`. They can be installed using `pip install` or `conda install`.
@@ -27,3 +27,10 @@ The main librairies required are: `numpy`, `scipy`, `sklearn`, `keras` and `iter
 - select if plotting confusion matrix in `testing_options`
 
 2. Executing the main script: `python3 main.py` 
+
+## Raw performance:
+- 100 original images (50 per class) augmented to 1600
+- train/test dataset split 80%/20%
+- train with 10 epochs, dropout = 0.2
+- accuracy: precision = 77%, recall = 72%
+
