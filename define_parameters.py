@@ -11,7 +11,7 @@ class image_parameters:
     CONTRAST = [0.33,15]  # Gain and Bias for contrast adjustement 
 
 class CNN_parameters:
-    EPOCHS = 10  # Nb of epochs for CNN training
+    EPOCHS = 25  # Nb of epochs for CNN training
     BATCH_SIZE = 10 # Nb of images per batch of training
     DROPOUT = 0.30  # Dropout factor
     ACTIVATION = 'relu' # Activation layer used
