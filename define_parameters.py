@@ -1,14 +1,23 @@
 class paths:
-    DATA_PATH = '../../Data/Augmented/'  # Folder path where raw images are stored
+    DATA_PATH = '../../Data/EloTash/'  # Folder path where raw images are stored
     MODEL_PATH = 'Model/'  # Folder which contains the output images
     MODEL_NAME = 'Best_CNN_model.h5' # Name of saved model in MODEL_PATH
 
+class image_parameters:
+    SIZE_IMAGE = 350  # Size of output images in pixels
+    TRANSLATION = 0.10  # Fraction of the image size to be translated
+    ROTATION = 20.0  # Angle of rotation in degrees
+    SHEARING = 0.08  # Shearing factor
+    CONTRAST = [0.33,15]  # Gain and Bias for contrast adjustement 
+
 class CNN_parameters:
-    EPOCHS = 50  # Nb of epochs for CNN training
-    BATCH_SIZE = 32 # Nb of images per batch of training
-    DROPOUT = 0.2  # Dropout factor
+    EPOCHS = 10  # Nb of epochs for CNN training
+    BATCH_SIZE = 10 # Nb of images per batch of training
+    DROPOUT = 0.30  # Dropout factor
     ACTIVATION = 'relu' # Activation layer used
     OPTIMIZER = 'adam' # Optimizer used in CNN training
+    LEARNING_RATE = 0.00005# Learning rate of CNN
+    L2_REGUL = 0.01 # L2 regularization
     NB_CLASS = 2 # Binary class problem or multiclass
 
 class testing_options:

@@ -1,6 +1,5 @@
 from define_parameters import CNN_parameters, paths
-from keras import optimizers
-from keras import backend
+from keras import backend, regularizers, optimizers
 from keras.models import Sequential
 from keras.layers import  Conv2D, MaxPooling2D, Dense, Dropout, Flatten
 import numpy as np
@@ -18,6 +17,8 @@ class train_CNN:
         self.dropout_coef = CNN_parameters.DROPOUT
         self.acti_neuron = CNN_parameters.ACTIVATION
         self.opti = CNN_parameters.OPTIMIZER
+        self.lnr = CNN_parameters.LEARNING_RATE
+        self.l2regul = CNN_parameters.L2_REGUL
         self.nb_class = CNN_parameters.NB_CLASS
         self.model_output_path = paths.MODEL_PATH
         self.model_name = paths.MODEL_NAME
@@ -28,23 +29,26 @@ class train_CNN:
         set_random_seed(2)
     # Build Model
         model = Sequential()
-        model.add(Conv2D(32,(5,5), activation = self.acti_neuron, input_shape=(shape_input)))
-        model.add(MaxPooling2D(pool_size=(3,3)))
+        model.add(Conv2D(64,(10,10), activation = self.acti_neuron, input_shape = (shape_input), kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(MaxPooling2D(pool_size=(5,5)))
         model.add(Dropout(self.dropout_coef))
 
-        model.add(Conv2D(16,(2,2), activation = self.acti_neuron))
-        model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Conv2D(32,(4,4), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(MaxPooling2D(pool_size=(3,3)))
         model.add(Dropout(int(0.5*self.dropout_coef)))
 
         model.add(Flatten())
         model.add(Dropout(int(1.5*self.dropout_coef)))
 
+        if(self.opti == 'adam'): 
+            optimizer = optimizers.Adam(lr = self.lnr)
+
         if(self.nb_class == 2):
             model.add(Dense(1, activation='sigmoid'))
-            model.compile(loss = 'binary_crossentropy', optimizer = self.opti, metrics=['binary_accuracy']) 
+            model.compile(loss = 'binary_crossentropy', optimizer = optimizer, metrics=['binary_accuracy']) 
         elif(self.nb_class > 2):
             model.add(Dense(self.nb_class, activation='softmax'))
-            model.compile(loss = 'categorical_crossentropy', optimizer = self.opti, metrics=['categorical_accuracy']) 
+            model.compile(loss = 'categorical_crossentropy', optimizer = optimizer, metrics=['categorical_accuracy']) 
 
         return model
 

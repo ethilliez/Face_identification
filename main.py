@@ -2,9 +2,10 @@ import numpy as np
 import os
 from glob import glob
 from scipy import misc
-from define_parameters import paths
+from define_parameters import paths, image_parameters
 import re
 import random
+from preprocessing import image_augmentation
 from training import train_CNN
 from testing import test_CNN
 from sklearn.model_selection import train_test_split
@@ -65,6 +66,32 @@ def TT_split(X,y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 0)
     return X_train, X_test, y_train, y_test
 
+def data_augmentation(X_train, X_test, y_train):
+    # Resize both image stats and perform data augmentation on training set
+    preprocess = image_augmentation()
+    logger.info(" Resize images on testing set...")
+    X_reshape = []
+    for i in range(0,len(X_test)):
+        image = X_test[i] 
+        image = preprocess.resize_image(image, npix = image_parameters.SIZE_IMAGE)
+        X_reshape.append(image)
+    X_test = np.stack(X_reshape)
+
+    logger.info(" Resize and perform data augmentation on training set...")
+    X_aug = []
+    y_aug = []
+    for i in range(0,len(X_train)):
+        image = X_train[i]
+        images_augmented = preprocess.perform_augmentation(image, npix = image_parameters.SIZE_IMAGE)
+        X_aug.extend(images_augmented)
+        y_aug += len(images_augmented)* [y_train[i]]
+    X_train = np.stack(X_aug)
+    y_train = np.stack(y_aug)
+    if(len(X_train) != len(y_train) and X_train.ndim != 4): 
+        logger.error("  Error in creating augmented arrays. Exit.")
+        exit()
+    return X_train, X_test, y_train
+
 def train(X_train, y_train):
     # Perform training
     logger.info(" Starting training...")
@@ -86,6 +113,8 @@ def main():
     X = standardization_data(X)
     X, y = shuffle_array(X, y)
     X_train, X_test, y_train, y_test = TT_split(X,y)
+    X_train, X_test, y_train = data_augmentation(X_train, X_test, y_train)
+    X_train, y_train = shuffle_array(X_train, y_train)
     train(X_train, y_train)
     performance = test(X_test, y_test)
     print("Metrics report on testing set: {}".format(performance))
