@@ -12,9 +12,19 @@ from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import logging
 import matplotlib.pyplot as plt
+import dlib
+from skimage import io
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def rgb2gray(img):
+    R = img[:, :, 0]
+    G = img[:, :, 1]
+    B = img[:, :, 2]
+    img_gray = R * 299. / 1000 + G * 587. / 1000 + B * 114. / 1000
+    img_gray = img_gray.astype(np.uint8)
+    return img_gray
 
 def read_data(imagelist):
     # Read Data
@@ -23,8 +33,31 @@ def read_data(imagelist):
     X = np.array(X_img)
     return X
 
+def detect_crop_faces(X):
+    logger.info(" Crop faces...")
+    # Create a HOG face detector using the built-in dlib class
+    face_detector = dlib.get_frontal_face_detector()
+    faces = []
+    count = 0
+    for image in X: 
+    # Run the HOG face detector on the image data.
+    # The result will be the bounding boxes of the faces in our image.
+        image_gray = rgb2gray(image)
+        detected_faces = face_detector(image_gray, 1)
+        # Loop through each face we found in the image
+        for i, face_rect in enumerate(detected_faces):
+           # Crop image to face location
+            crop = image[face_rect.top():face_rect.bottom(), face_rect.left():face_rect.right()]
+           # Save faces
+            faces.append(crop)       
+    faces = np.array(faces)
+    if(len(faces) != len(X)):
+        logger.error("  Some faces have not been detected. Exit.")
+        exit()
+    return faces
+
 def standardization_data(imagelist, method = 'over-image'):
-	# Standardization:  x - mean / std
+    # Standardization:  x - mean / std
     logger.info(" Standardization of images...")
     for x in imagelist:
         for chan in range(0,len(x[0,0])):
@@ -48,7 +81,7 @@ def label_encoding(imagelist):
         le.fit(np.array(list(set(y_img))))
         y = le.transform(np.array(y_img))
     else:
-        logger.info("Hot encoder implemented yet. Exit.")
+        logger.info("Hot encoder not implemented yet. Exit.")
         exit()
     return y
 
@@ -89,7 +122,7 @@ def data_augmentation(X_train, X_test, y_train):
     y_train = np.stack(y_aug)
     if(len(X_train) != len(y_train) and X_train.ndim != 4): 
         logger.error("  Error in creating augmented arrays. Exit.")
-        exit()
+        exit() 
     return X_train, X_test, y_train
 
 def train(X_train, y_train):
@@ -109,6 +142,7 @@ def main():
     # Main calling all functions
     imagelist = glob(paths.DATA_PATH+"*")
     X = read_data(imagelist)
+    X = detect_crop_faces(X)
     y = label_encoding(imagelist)
     X = standardization_data(X)
     X, y = shuffle_array(X, y)
