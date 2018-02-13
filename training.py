@@ -22,23 +22,25 @@ class train_CNN:
         self.nb_class = CNN_parameters.NB_CLASS
         self.model_output_path = paths.MODEL_PATH
         self.model_name = paths.MODEL_NAME
-        self.test = False
 
     def CNN_model(self, shape_input):
         seed(1)
         set_random_seed(2)
     # Build Model
         model = Sequential()
-        model.add(Conv2D(64,(10,10), activation = self.acti_neuron, input_shape = (shape_input), kernel_regularizer = regularizers.l2(self.l2regul)))
-        model.add(MaxPooling2D(pool_size=(5,5)))
+        model.add(Conv2D(512,(4,4), activation = self.acti_neuron, input_shape = (shape_input), kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(MaxPooling2D(pool_size=(2,2)))
         model.add(Dropout(self.dropout_coef))
 
-        model.add(Conv2D(32,(4,4), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
-        model.add(MaxPooling2D(pool_size=(3,3)))
-        model.add(Dropout(int(0.5*self.dropout_coef)))
+        model.add(Conv2D(256,(3,3), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+
+        model.add(Conv2D(128,(3,3), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(MaxPooling2D(pool_size=(2,2)))
 
         model.add(Flatten())
-        model.add(Dropout(int(1.5*self.dropout_coef)))
+        model.add(Dense(64, activation = self.acti_neuron))
+        model.add(Dropout(int(0.5*self.dropout_coef)))
 
         if(self.opti == 'adam'): 
             optimizer = optimizers.Adam(lr = self.lnr)
@@ -60,10 +62,7 @@ class train_CNN:
         model = self.CNN_model(shape_input)
         min_loss = 1.0
         max_accu = 0.5
-
-        if self.test:
-        	X_train = X_train[0:100]
-        	y_train = y_train[0:100]
+        count = 0
 
         for i in range(self.epochs):
             history = model.fit(X_train, y_train, batch_size = self.nb_batch, shuffle= 'batch', epochs=1, validation_split = 0.1)
@@ -72,4 +71,10 @@ class train_CNN:
                 max_accu = history.history['val_binary_accuracy'][0]
                 logger.info((" New saved weights with loss: ", np.round(min_loss,2), "and accuracy: ", np.round(max_accu,2)))
                 model.save(self.model_output_path+self.model_name, overwrite = True)
+                count = 0
+            else: 
+                count = count + 1
+                if(count == 10):
+                    logger.info("    Not learning anymore. Stopping training.")
+                    break
 

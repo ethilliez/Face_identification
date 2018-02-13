@@ -38,17 +38,16 @@ def detect_crop_faces(X):
     # Create a HOG face detector using the built-in dlib class
     face_detector = dlib.get_frontal_face_detector()
     faces = []
-    count = 0
     for image in X: 
     # Run the HOG face detector on the image data.
     # The result will be the bounding boxes of the faces in our image.
         image_gray = rgb2gray(image)
         detected_faces = face_detector(image_gray, 1)
-        # Loop through each face we found in the image
+            # Loop through each face we found in the image
         for i, face_rect in enumerate(detected_faces):
-           # Crop image to face location
+            # Crop image to face location
             crop = image[face_rect.top():face_rect.bottom(), face_rect.left():face_rect.right()]
-           # Save faces
+            # Save faces
             faces.append(crop)       
     faces = np.array(faces)
     if(len(faces) != len(X)):

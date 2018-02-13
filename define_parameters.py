@@ -4,14 +4,14 @@ class paths:
     MODEL_NAME = 'Best_CNN_model.h5' # Name of saved model in MODEL_PATH
 
 class image_parameters:
-    SIZE_IMAGE = 128  # Size of output images in pixels
-    TRANSLATION = 0.10  # Fraction of the image size to be translated
-    ROTATION = 20.0  # Angle of rotation in degrees
-    SHEARING = 0.08  # Shearing factor
+    SIZE_IMAGE = 64  # Size of output images in pixels
+    TRANSLATION = 0.05  # Fraction of the image size to be translated
+    ROTATION = 10.0  # Angle of rotation in degrees
+    SHEARING = 0.04  # Shearing factor
     CONTRAST = [0.33,15]  # Gain and Bias for contrast adjustement 
 
 class CNN_parameters:
-    EPOCHS = 15  # Nb of epochs for CNN training
+    EPOCHS = 75  # Nb of epochs for CNN training
     BATCH_SIZE = 10 # Nb of images per batch of training
     DROPOUT = 0.30  # Dropout factor
     ACTIVATION = 'relu' # Activation layer used
