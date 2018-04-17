@@ -28,19 +28,20 @@ class train_CNN:
         set_random_seed(2)
     # Build Model
         model = Sequential()
-        model.add(Conv2D(512,(4,4), activation = self.acti_neuron, input_shape = (shape_input), kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(Conv2D(32,kernel_size=(10,10), strides=(2, 2), activation = self.acti_neuron, input_shape = (shape_input), kernel_regularizer = regularizers.l2(self.l2regul)))
         model.add(MaxPooling2D(pool_size=(2,2)))
         model.add(Dropout(self.dropout_coef))
 
-        model.add(Conv2D(256,(3,3), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
-        model.add(MaxPooling2D(pool_size=(2,2)))
+        #model.add(Conv2D(32,(4,4), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
+        #model.add(MaxPooling2D(pool_size=(2,2)))
 
-        model.add(Conv2D(128,(3,3), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
+        model.add(Conv2D(64,(3,3), strides=(1, 1), activation = self.acti_neuron, kernel_regularizer = regularizers.l2(self.l2regul)))
         model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Dropout(0.5*self.dropout_coef))
 
         model.add(Flatten())
-        model.add(Dense(64, activation = self.acti_neuron))
-        model.add(Dropout(int(0.5*self.dropout_coef)))
+        model.add(Dense(128, activation = self.acti_neuron))
+        model.add(Dropout(int(1.0*self.dropout_coef)))
 
         if(self.opti == 'adam'): 
             optimizer = optimizers.Adam(lr = self.lnr)
@@ -65,11 +66,11 @@ class train_CNN:
         count = 0
 
         for i in range(self.epochs):
-            history = model.fit(X_train, y_train, batch_size = self.nb_batch, shuffle= 'batch', epochs=1, validation_split = 0.1)
+            history = model.fit(X_train, y_train, batch_size = self.nb_batch, shuffle= 'batch', epochs=1, validation_split = 0.05)
             if(history.history['val_loss'][0] <= min_loss and history.history['val_binary_accuracy'][0] >= 0.9*max_accu):
                 min_loss = history.history['val_loss'][0]
                 max_accu = history.history['val_binary_accuracy'][0]
-                logger.info((" New saved weights with loss: ", np.round(min_loss,2), "and accuracy: ", np.round(max_accu,2)))
+                logger.info((" New saved weights with loss: ", np.round(min_loss,3), "and accuracy: ", np.round(max_accu,3)))
                 model.save(self.model_output_path+self.model_name, overwrite = True)
                 count = 0
             else: 

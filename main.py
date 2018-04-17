@@ -55,8 +55,7 @@ def detect_crop_faces(X):
         exit()
     return faces
 
-def standardization_data(imagelist, method = 'over-image'):
-    # Standardization:  x - mean / std
+def standardization_data(imagelist):
     logger.info(" Standardization of images...")
     for x in imagelist:
         for chan in range(0,len(x[0,0])):
@@ -95,7 +94,7 @@ def shuffle_array(X,y):
 def TT_split(X,y):
     # Split training and testing
     logger.info(" Splitting training and testing data...")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state = 0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.15, random_state = 0)
     return X_train, X_test, y_train, y_test
 
 def data_augmentation(X_train, X_test, y_train):
@@ -105,7 +104,10 @@ def data_augmentation(X_train, X_test, y_train):
     X_reshape = []
     for i in range(0,len(X_test)):
         image = X_test[i] 
-        image = preprocess.resize_image(image, npix = image_parameters.SIZE_IMAGE)
+        try:
+            image = preprocess.resize_image(image, npix = image_parameters.SIZE_IMAGE)
+        except:
+            logger.error("  Error: image could not be resized. Exit.")
         X_reshape.append(image)
     X_test = np.stack(X_reshape)
 
@@ -114,7 +116,10 @@ def data_augmentation(X_train, X_test, y_train):
     y_aug = []
     for i in range(0,len(X_train)):
         image = X_train[i]
-        images_augmented = preprocess.perform_augmentation(image, npix = image_parameters.SIZE_IMAGE)
+        try:
+            images_augmented = preprocess.perform_augmentation(image, npix = image_parameters.SIZE_IMAGE)
+        except:
+            logger.error("  Error: image could not be resized. Exit.")
         X_aug.extend(images_augmented)
         y_aug += len(images_augmented)* [y_train[i]]
     X_train = np.stack(X_aug)
@@ -143,11 +148,12 @@ def main():
     X = read_data(imagelist)
     X = detect_crop_faces(X)
     y = label_encoding(imagelist)
-    X = standardization_data(X)
     X, y = shuffle_array(X, y)
     X_train, X_test, y_train, y_test = TT_split(X,y)
     X_train, X_test, y_train = data_augmentation(X_train, X_test, y_train)
     X_train, y_train = shuffle_array(X_train, y_train)
+    X_train = standardization_data(X_train)
+    X_test = standardization_data(X_test)
     train(X_train, y_train)
     performance = test(X_test, y_test)
     print("Metrics report on testing set: {}".format(performance))

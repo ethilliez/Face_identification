@@ -1,21 +1,21 @@
 # Face_identification
 
+![Alt Text 1](https://raw.github.com/ethilliez/Face_identification/master/Figures/Elo_4.jpg)![Alt Text 2](https://raw.github.com/ethilliez/Face_identification/master/Figures/Elo_13.jpg) ![Alt Text 3](https://raw.github.com/ethilliez/Face_identification/master/Figures/Tash_11.jpg)![Alt Text 4](https://raw.github.com/ethilliez/Face_identification/master/Figures/Tash_14.jpg)
+
 ## Description:
-Algorithm performing face identification via supervised learning using a Convolutional Neural Network (CNN). The CNN was trained using a set of images featuring two different persons, which the CNN must learn to distinguish. 
+Algorithm performing face identification via supervised learning using a Convolutional Neural Network (CNN). The CNN was trained using a set of images featuring two different persons, which the CNN must learn to distinguish. Examples of training data are shown above.
 
 ## Personal development goals:
 - Practising developing a Convolutional Neural Network using [Keras](https://github.com/fchollet/keras).
 - Playing with the [Image Augmentation tool](https://github.com/ethilliez/Image_augmentation) I previously developed.
 - Preparing a model to recognize people for a future real-time person identification tool.
-- Practising performing the same task with Tensorflow/Caffe ?
 
 ## Status of development:
-For Keras implementation:
-- Code Skeletion created
-- Pre-processing implemented
-- Training implemented
-- Testing implemented
-- Raw performance in testing (no fine-tuning)
+- :white_check_mark: Code Skeletion created 
+- :white_check_mark: Pre-processing implemented (including face cropping, data augmentation standardization)
+- :white_check_mark: Training implemented
+- :white_check_mark: Testing implemented
+- :white_check_mark: Raw performance in testing (no fine-tuning)
 
 ## Requirements:
 The main librairies required are: `numpy`, `scipy`, `sklearn`, `keras` and `itertools`. They can be installed using `pip install` or `conda install`.
@@ -29,6 +29,11 @@ The main librairies required are: `numpy`, `scipy`, `sklearn`, `keras` and `iter
 2. Executing the main script: `python3 main.py` 
 
 ## Raw performance:
-- 100 original images (50 per class) augmented to 1600
+- 140 original images (70 per class) augmented to 1800
 - train/test dataset split 80%/20%
+- training on 75 epochs, best validation loss =  and validation accuracy =  (see `define_paramters.py` for all hyperparameters)
+- testing on images, testing accuracy 
+- see confusion matrix obtained on the testing set
+
+![Alt Text 1](https://raw.github.com/ethilliez/Face_identification/master/Figures/Confusion_matrix.jpg)!
 

@@ -57,7 +57,3 @@ class test_CNN:
             fig.savefig("Confusion_matrix.png",format='png', dpi=300)
             fig.clf()
         return metrics_report
-
-
-
-
